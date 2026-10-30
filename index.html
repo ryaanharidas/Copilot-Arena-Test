@@ -448,6 +448,56 @@
 </section>  
 
 
+<section id="lobby" class="setup card hidden">
+  <div class="kicker">LIVE ROOM</div>
+  <h1 id="roomDisplay">------</h1>
+  <h2 id="gameTitle">Copilot Tax Arena</h2>
+  <p id="gameDesc" class="sub" style="margin-left: 0;"></p>
+  <div class="grid">
+  </div>
+  <img id="qr" class="qr" alt="Join room QR code">
+  <p class="tiny">Participant join link</p>
+  <div id="joinUrl" class="message" style="overflow-wrap: anywhere;"></div>
+</div>
+<div>
+  <div class="bigstat" id="playerCount">0</div>
+  <div class="label">PLAYERS READY</div>
+  <div id="lobbyPlayers" class="leader" style="margin-top: 12px;"></div>
+  </div>
+</div>
+<button class="btn green wide" style="margin-top: 16px;"
+onclick="window.hostStart()">START GAME</button>
+<button class="btn alt wide" style="margin-top: 10px;"
+onclick="show('home')">CANCEL</button>
+</section>
+
+<section id="hostGame" class="hidden">
+<div class="hostgrid">
+  <div class="card">
+    <div class="row">
+      <div>
+        <div class="label" id="roundLabel">READY</div>
+        <div class="kicker" id="roundType"></div>
+      </div>
+      <div class="timer" id="hostTimer">--</div>
+    </div>
+    <div class="question" id="hostQuestion">Players are entering the Arena.</div>
+    <div id="hostAnswers" class="answers"></div>
+    <div id="hostReveal" class="message hidden"></div>
+    <div class="host-controls" style="margin-top: 16px;">
+      <button id="nextBtn" class="btn green" onclick="window.hostNext()">OPEN ROUND</button>
+      <button class="btn red" onclick="window.endGame()">END GAME</button>"
+  </div>
+  </div>
+  <div class="card">
+  <div class="bigstat" id="answeredCount">0</div>
+<div class="label">ANSWERS REIVED</div>
+<h3>Leaderboard</h3>
+<div id="hostLeaderboard" class="leader"></div>
+</div>
+</div>
+</section>
+
     <section id="demoJoin" class="setup card hidden">
       <h2>Create your Arena identity</h2>
       <p class="sub" style="margin-left:0">Enter your name or nickname, choose your pilot avatar, and step into the
@@ -671,7 +721,20 @@ const firebaseConfig = {
           created: Date.now()
         }
       );
-      alert("Live room created successfully. \n\nRoom code: " + room + "\nGame: " + gameKey);
+      const joinLink = location.origin + location.pathname + "?join=" + encodeURIComponent(room);
+      document.getElementById("roomDisplay").textContent = room;
+      document.getElementById("gameTitle").textContent = GAMES[gameKey].title;
+      document.getElementById("gameDesc").textContent = GAMES[gameKey].desc;
+      document.getElementById("joinUrl").textContent = joinLink;
+      document.getElementById("qr").src = "https://api.qrserver.com/v1/create-qr-code/?size=190x190&data=" + encodeURIComponent(joinLink);
+      show("lobby");
+      firebaseModule.onValue(
+        firebaseModule.ref(db, "rooms/" + room + "/players"),
+        snapshot => {
+          players = snapshot.val() || {};
+          renderLobby();
+        }
+      );
      } catch (error) {
       console.error("Firebase room creation failed:", error);
       alert("Could not create the live room. \n\n" + error.message);

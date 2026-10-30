@@ -644,43 +644,34 @@ const firebaseConfig = {
 
     window.createConfiguredRoom = async () => {
      try {
-      const roomCodeInput = document.getElementById("roomCode");
-      const gameSelection = document.getElementById("gamePick");
-      if(!roomCodeInput) {
-        throw new Error('The room code field with id="roomCode" could not be found.');
+      if (!document.getElementById("roomCode")) {
+        throw new Error ('The room code field was not found.');
       }
-      if(!gameSelection) {
-        throw new Error('The game selection field with id="gamePick" could not be found.');
+      if (!document.getElementById("gamePick")) {
+        throw new Error('The game selection field was not found.');
       }
-      const selectedRoom = roomCodeInput.value.trim().toUpperCase();
-      const selectedGame = gameselection.value || "day1";
-      if(!selectedRoom) {
+      room = document.getElementById("roomCode").value.trim().toUpperCase();
+      gameKey = document.getElementById("gamePick").value || "day1";
+      if(!room) {
         alert("Please enter a room code.");
         return;
       }
       mode = "live";
-      room = selectedRoom;
-      gameKey = selectedGame;
-      fbConfig = FIREBASE_CONFIG;
-      const firebaseDatabaseModule = await initFirebase (FIREBASE_CONFIG);
-      const roomReference = firebaseDatabaseModule.ref(
-        db,
-        "rooms/" + selectedRoom
+      fbConfig = firebaseConfig;
+      const firebaseModule = await initFirebase(firebaseConfig);
+      await firebaseModule.set(
+        firebaseModule.ref(db, "rooms/" + room),
+        {
+          gameKey: gameKey,
+          state: {
+            idx: -1,
+            phase: "lobby",
+            ends: 0
+          },
+          created: Date.now()
+        }
       );
-      await firebaseDatabaseModule.set(roomReference, {
-        gameKey: selectedGame,
-        state: {
-          idx: -1,
-          phase: "lobby",
-          ends: 0
-        },
-        created: Date.now()
-      });
-      alert(
-        "Live room created successfully. \n\n" +
-        "Room code: " + selectedRoom + "\n" +
-        "Game: " + selectedGame
-      );
+      alert("Live room created successfully. \n\nRoom code: " + room + "\nGame: " + gameKey);
      } catch (error) {
       console.error("Firebase room creation failed:", error);
       alert("Could not create the live room. \n\n" + error.message);

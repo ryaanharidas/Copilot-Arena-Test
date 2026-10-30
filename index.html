@@ -414,8 +414,12 @@
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px auto 26px"><span class="pill">⚡
           AI Reflex</span><span class="pill">🧩 Prompt Puzzle</span><span class="pill">🕵️ Red Flag Hunt</span><span
           class="pill">💣 Risk Wager</span></div>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><button class="btn green"
-          onclick="show('demoJoin')">START</button></div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn green" onclick="window.openHostSetup()">HOST A GAME</button>
+        <button class="btn blue" onclick="window.openJoinSetup()">JOIN A GAME</button>
+        <button class="btn alt" onclick="show('demoJoin')">PLAY SOLO</button>
+
+        </div>
     </section>
 
 
@@ -601,6 +605,13 @@ const firebaseConfig = {
     function sortedPlayers() {return Object.entries(players).map(([id, p]) => ({id, ...p})).sort((a, b) => (b.score || 0) - (a.score || 0) || (a.joined || 0) - (b.joined || 0))} function renderBoard(id, n) {const s = sortedPlayers().slice(0, n); $(id).innerHTML = s.length ? s.map((p, i) => `<div class="leadrow"><div class="pos">${i + 1}</div><div>${esc(p.name)} ${p.streak >= 3 ? '🔥' : ''}</div><div class="pts">${(p.score || 0).toLocaleString()} XP</div></div>`).join('') : '<p class="tiny">No scores yet.</p>'}
     window.toggleLeaderboard = () => toast('Top five updated live'); window.endGame = async () => {await setState({...state, phase: 'ended'}); renderFinal()}; function renderFinal() {const s = sortedPlayers().slice(0, 3); show('final'); $('champion').textContent = s[0] ? s[0].name.toUpperCase() + ' IS THE CHAMPION' : 'COPILOT CHAMPION'; $('podium').innerHTML = s.map((p, i) => `<div class="card"><div class="confetti">${['🥇', '🥈', '🥉'][i]}</div><h2>${esc(p.name)}</h2><div class="bigstat">${(p.score || 0).toLocaleString()}</div><div class="label">XP</div></div>`).join('')}
     function esc(s) {return String(s).replace(/[&<>'"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[c]))}
+    
+    window.openHostSetup = () => {
+      alert("Host setup is ready. We will connect this button to Firebase next.");
+    };
+    window.openJoinSetup = () => {
+      alert("Join setup is ready. We will connect this button to Firebase next.");
+    };
     const params = new URLSearchParams(location.search);
     window.show = window.show; window.createLiveRoom = window.createLiveRoom; window.joinLiveRoom = window.joinLiveRoom; window.hostStart = window.hostStart; window.hostNext = window.hostNext; window.endGame = window.endGame; window.toggleLeaderboard = window.toggleLeaderboard;
   </script>

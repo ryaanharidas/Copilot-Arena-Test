@@ -643,44 +643,50 @@ const firebaseConfig = {
     };
 
     window.createConfiguredRoom = async () => {
-      try{
-        const roomCodeInput = $("roomCode");
-        const gameSelection = $("gamePick");
-        const seletedRoom = roomCodeInput ? roomCodeInput.value.trim().toUpperCase() : "";
-        const selectedGame= gameSelection ? gameSelection.value : "day1";
-        if (!selectedRoom) {
-          alert("Please enter a room code.");
-          return;
-        }
-        mode = "live";
-        room = selectedRoom;
-        gameKey = selectedGame;
-        fbConfig = FIREBASE_CONFIG;
-        const firebaseDatabaseModule = await initFirebase(FIREBASE_CONFIG);
-        await firebaseDatabaseModule.set(
-          firebaseDatabaseModule.ref(db, "rooms/" + room),
-          {
-            gameKey: gameKey,
-            state: {
-              idx: -1,
-              phase: "lobby",
-              ends: 0
-            },
-            players: {},
-            created: Date.now()
-          }
-        );
-        alert(
-          "Live room created successfully.\n\n" +
-          "Room code: " + room + "\n" +
-          "Game :" + GAMES[gameKey].title
-        );
-      } catch (error) {
-        console.error("Room creation failed:", error);
-        alert("Could not create the room. \n\n" + error.message);
+     try {
+      const roomCodeInput = document.getElementById("roomCode");
+      const gameSelection = document.getElementById("gamePick");
+      if(!roomCodeInput) {
+        throw new Error('The room code field with id="roomCode" could not be found.');
       }
+      if(!gameSelection) {
+        throw new Error('The game selection field with id="gamePick" could not be found.');
+      }
+      const selectedRoom = roomCodeInput.value.trim().toUpperCase();
+      const selectedGame = gameselection.value || "day1";
+      if(!selectedRoom) {
+        alert("Please enter a room code.");
+        return;
+      }
+      mode = "live";
+      room = selectedRoom;
+      gameKey = selectedGame;
+      fbConfig = FIREBASE_CONFIG;
+      const firebaseDatabaseModule = await initFirebase (FIREBASE_CONFIG);
+      const roomReference = firebaseDatabaseModule.ref(
+        db,
+        "rooms/" + selectedRoom
+      );
+      await firebaseDatabaseModule.set(roomReference, {
+        gameKey: selectedGame,
+        state: {
+          idx: -1,
+          phase: "lobby",
+          ends: 0
+        },
+        created: Date.now()
+      });
+      alert(
+        "Live room created successfully. \n\n" +
+        "Room code: " + selectedRoom + "\n" +
+        "Game: " + selectedGame
+      );
+     } catch (error) {
+      console.error("Firebase room creation failed:", error);
+      alert("Could not create the live room. \n\n" + error.message);
+     }
     };
-
+    
     const params = new URLSearchParams(location.search);
     window.show = window.show; window.createLiveRoom = window.createLiveRoom; window.joinLiveRoom = window.joinLiveRoom; window.hostStart = window.hostStart; window.hostNext = window.hostNext; window.endGame = window.endGame; window.toggleLeaderboard = window.toggleLeaderboard;
   </script>

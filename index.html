@@ -833,16 +833,17 @@ alert("Could not join the live room.\n\n" + error.message);
      }
     };
     
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(window.location.search);
+    const roomFromLink = params.get("join");
     if(roomFromLink) {
-      window.addEventListener("DOMContentLoaded", () => {
-        const joinCodeElement = document.getElementbyId("joinCode");
-        if (joinCodeElement) {
-          joinCodeElement.value=roomFromLink.toUpperCase();
-        }
+      const joinCodeElement = document.getElementById("joinCode");
+      if (joinCodeElement) {
+        joinCodeElement.value = roomFromLink.trim().toUpperCase();
         show("joinSetup");
-      });
-    }
+      } else {
+       console.error('The Join screen field with id="joinCode" was not found.');
+      } 
+      }
     window.show = window.show; window.createLiveRoom = window.createLiveRoom; window.joinLiveRoom = window.joinLiveRoom; window.hostStart = window.hostStart; window.hostNext = window.hostNext; window.endGame = window.endGame; window.toggleLeaderboard = window.toggleLeaderboard;
   </script>
 </body>

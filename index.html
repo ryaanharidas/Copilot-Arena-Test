@@ -491,6 +491,16 @@
           {type: 'HUMAN VS AI • ALL-IN', time: 15, wager: [.2, .4, .7], q: 'The ultimate goal of AI in a tax function is to remove humans wherever possible.', a: ['TRUE', 'FALSE'], correct: 1, base: 1000, explain: 'AI should make tax professionals better, not make professional judgement disappear.'}]
       }
     };
+const firebaseConfig = {
+  apiKey: "AIzaSyCaQU7OqIRQ4bFWCLM8iReQR913q1zFva8",
+  authDomain: "copilot-tax-arena.firebaseapp.com",
+  databaseURL: "https://copilot-tax-arena-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "copilot-tax-arena",
+  storageBucket: "copilot-tax-arena.firebasestorage.app",
+  messagingSenderId: "432428330357",
+  appId: "1:432428330357:web:4bbf2f3f17bff69d3cf73c",
+  measurementId: "G-B5MGJKKPRZ"
+};
     let mode = 'demo', gameKey = 'day1', room = 'DEMO', db = null, fbConfig = null, uid = crypto.randomUUID(), name = 'Demo Player', state = {idx: -1, phase: 'lobby', ends: 0}, players = {}, timerHandle = null;
     const $ = id => document.getElementById(id); const shuffled = (q) => {if (!q) return []; if (!q._order) {q._order = q.a.map((_, i) => i); for (let i = q._order.length - 1; i > 0; i--) {const j = Math.floor(Math.random() * (i + 1));[q._order[i], q._order[j]] = [q._order[j], q._order[i]]} } return q._order}; window.show = id => {document.querySelectorAll('section').forEach(x => x.classList.add('hidden')); $(id).classList.remove('hidden')};
     function toast(s) {$('toast').textContent = s; $('toast').classList.remove('hidden'); setTimeout(() => $('toast').classList.add('hidden'), 1800)}

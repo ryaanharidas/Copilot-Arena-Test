@@ -650,7 +650,7 @@ const firebaseConfig = {
         alert("Please enter a room code.");
         return;
       }
-      cost selectedGame = gameSelection ?
+      const selectedGame = gameSelection ?
       gameSelection.options[gameSelection.selectedIndex].text : "Copilot Tax Arena";
       alert("Host setup is ready. \n\nGame: " + selectedGame + "\nRoom code: " + roomCode + "\n\nFirevase room creation will be connected next.");
     };

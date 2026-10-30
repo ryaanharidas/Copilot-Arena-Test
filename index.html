@@ -421,6 +421,31 @@
 
         </div>
     </section>
+    <section id="hostSetup" class="setup card hidden">
+
+<h2>Host a live game</h2>
+
+<p class="sub" style="margin-left: 0;">Create a room and share the room code with participants.</p>
+
+<label class="label" for="gamePick">Select the game</label>
+
+<select id="gamePick">
+
+<option value="day1">Day 1: Beat the Bot</option>
+
+<option value="day2">Day 2: Trust, Fix or Kill the AI</option>
+
+</select>
+
+<label class="label" for="roomCode" style="display: block; margin-top: 14px;">Room code</label>
+
+<input id="roomCode" maxlength="8" placeholder="Example: TAX123">
+
+<button class="btn green wide" style="margin-top: 16px;" onclick="window.previewRoomSetup()">CONTINUE</button>
+
+<button class="btn alt wide" style="margin-top: 10px;" onclick="show('home')">BACK</button>
+
+</section>  
 
 
     <section id="demoJoin" class="setup card hidden">
@@ -607,10 +632,27 @@ const firebaseConfig = {
     function esc(s) {return String(s).replace(/[&<>'"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[c]))}
     
     window.openHostSetup = () => {
-      alert("Host setup is ready. We will connect this button to Firebase next.");
+      show("hostSetup");
+      const roomCodeInput = $("roomCode");
+      if (roomCodeInput && !roomCodeInput.value) {
+        roomCodeInput.value = Math.random().toString(36).slice(2, 8).toUpperCase();
+      }
     };
     window.openJoinSetup = () => {
       alert("Join setup is ready. We will connect this button to Firebase next.");
+    };
+
+    window.previewRoomSetup = () => {
+      const roomCodeInput = $("roomCode");
+      const gameSelection = $("gamePick");
+      const roomCode = roomCodeInput ? roomCodeInput.value.trim().toUpperCase() : "";
+      if (!roomcode) {
+        alert("Please enter a room code.");
+        return;
+      }
+      cost selectedGame = gameSelection ?
+      gameSelection.options[gameSelection.selectedIndex].text : "Copilot Tax Arena";
+      alert("Host setup is ready. \n\nGame: " + selectedGame + "\nRoom code: " + roomCode + "\n\nFirevase room creation will be connected next.");
     };
     const params = new URLSearchParams(location.search);
     window.show = window.show; window.createLiveRoom = window.createLiveRoom; window.joinLiveRoom = window.joinLiveRoom; window.hostStart = window.hostStart; window.hostNext = window.hostNext; window.endGame = window.endGame; window.toggleLeaderboard = window.toggleLeaderboard;

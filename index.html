@@ -441,7 +441,7 @@
 
 <input id="roomCode" maxlength="8" placeholder="Example: TAX123">
 
-<button class="btn green wide" style="margin-top: 16px;" onclick="window.previewRoomSetup()">CONTINUE</button>
+<button class="btn green wide" style="margin-top: 16px;" onclick="window.createConfiguredRoom()">CREATE LIVE ROOM</button>
 
 <button class="btn alt wide" style="margin-top: 10px;" onclick="show('home')">BACK</button>
 
@@ -642,18 +642,45 @@ const firebaseConfig = {
       alert("Join setup is ready. We will connect this button to Firebase next.");
     };
 
-    window.previewRoomSetup = () => {
-      const roomCodeInput = $("roomCode");
-      const gameSelection = $("gamePick");
-      const roomCode = roomCodeInput ? roomCodeInput.value.trim().toUpperCase() : "";
-      if (!roomcode) {
-        alert("Please enter a room code.");
-        return;
+    window.createConfiguredRoom = async () => {
+      try{
+        const roomCodeInput = $("roomCode");
+        const gameSelection = $("gamePick");
+        const seletedRoom = roomCodeInput ? roomCodeInput.value.trim().toUpperCase() : "";
+        const selectedGame= gameSelection ? gameSelection.value : "day1";
+        if (!selectedRoom) {
+          alert("Please enter a room code.");
+          return;
+        }
+        mode = "live";
+        room = selectedRoom;
+        gameKey = selectedGame;
+        fbConfig = FIREBASE_CONFIG;
+        const firebaseDatabaseModule = await initFirebase(FIREBASE_CONFIG);
+        await firebaseDatabaseModule.set(
+          firebaseDatabaseModule.ref(db, "rooms/" + room),
+          {
+            gameKey: gameKey,
+            state: {
+              idx: -1,
+              phase: "lobby",
+              ends: 0
+            },
+            players: {},
+            created: Date.now()
+          }
+        );
+        alert(
+          "Live room created successfully.\n\n" +
+          "Room code: " + room + "\n" +
+          "Game :" + GAMES[gameKey].title
+        );
+      } catch (error) {
+        console.error("Room creation failed:", error);
+        alert("Could not create the room. \n\n" + error.message);
       }
-      const selectedGame = gameSelection ?
-      gameSelection.options[gameSelection.selectedIndex].text : "Copilot Tax Arena";
-      alert("Host setup is ready. \n\nGame: " + selectedGame + "\nRoom code: " + roomCode + "\n\nFirevase room creation will be connected next.");
     };
+
     const params = new URLSearchParams(location.search);
     window.show = window.show; window.createLiveRoom = window.createLiveRoom; window.joinLiveRoom = window.joinLiveRoom; window.hostStart = window.hostStart; window.hostNext = window.hostNext; window.endGame = window.endGame; window.toggleLeaderboard = window.toggleLeaderboard;
   </script>
